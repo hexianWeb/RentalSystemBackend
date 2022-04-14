@@ -20,8 +20,9 @@ const houseSchema = new Schema({
   //   0低 1中 2高
   floor: { type: Number, default: 0 },
   orientataion: { type: String, required: true },
-  pic: { type: String },
+  pic: { type: String, default: "default_home.jpg" },
   admin_id: { type: Number, required: true },
+  status: { type: Number, default: 0, required: true },
   created: { type: String, trim: true, default: moment().format("L") },
   updated: { type: String, default: "" },
 });

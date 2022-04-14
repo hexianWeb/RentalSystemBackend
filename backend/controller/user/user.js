@@ -5,9 +5,12 @@ import Baseproto from "../../prototype/baseproto.js";
 import chalk from "chalk";
 
 import bcrpt from "bcryptjs";
-import formidable from "formidable";
-import { errorLogger } from "express-winston";
 
+import formidable from "formidable";
+
+import EmailModel from "../../models/email/email.js";
+
+import assert from "assert";
 class User extends Baseproto {
   constructor() {
     super();
@@ -49,11 +52,26 @@ class User extends Baseproto {
   }
 
   async register(req, res, next) {
-    var { user_name, user_password, email, user_phone } = req.body;
+    var { user_name, user_password, email, user_phone, vire } = req.body;
+    console.log(vire);
+    // 后端数据二次验证
     try {
       if (!user_name || !user_password) {
         throw new Error("信息不完整");
       }
+    } catch (error) {
+      res.cc(error.message);
+      return;
+    }
+    // 判断是否验证码正确
+    try {
+      if (!vire) {
+        throw new Error("验证码为空");
+      }
+
+      const flag = await EmailModel.findOne({ email, vire });
+
+      assert(flag, "验证码出错");
     } catch (error) {
       res.cc(error.message);
       return;
@@ -64,7 +82,6 @@ class User extends Baseproto {
       if (user) {
         res.cc("该用户已经存在");
       } else {
-        // 获取自增id
         const user_id = await this.getId("user_id");
 
         //   密码加密
@@ -76,6 +93,7 @@ class User extends Baseproto {
           user_phone,
           user_email: email,
         };
+
         // 创建实例对象
         await UserModel.create(newUser);
         res.send({
@@ -210,6 +228,18 @@ class User extends Baseproto {
     } catch (error) {
       console.log(chalk.red("获取用户列表失败", error.message));
       res.cc("获取用户列表失败");
+    }
+  }
+
+  async updateUserPassword(req, res, next) {
+    var { vire, email } = req.body;
+    try {
+      if (!vire || !email) {
+        throw new Error("验证码为空");
+      }
+    } catch (error) {
+      res.cc(error.message);
+      return;
     }
   }
 }

@@ -5,6 +5,9 @@ import joi from "@hapi/joi";
 // 登录账号
 const user_name = joi.string().alphanum().min(3).max(10).required();
 
+// 验证码
+const vire = joi.string().alphanum().max(6).required();
+
 // 登录密码
 const user_password = joi
   .string()
@@ -36,5 +39,6 @@ export const user_register_shcema = {
     user_password,
     email,
     user_phone,
+    vire,
   },
 };

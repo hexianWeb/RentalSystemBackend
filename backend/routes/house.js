@@ -4,13 +4,14 @@ import expressJoi from "@escook/express-joi";
 
 import house from "../controller/house/house.js";
 
-import multer from "multer";
-
-// app.use(multer({ dest: "../tmp" }));
-
 const router = express.Router();
 
-const upload = multer({ dest: "../tmp" });
-router.post("/add", upload.single("file"), house.pushHouse);
+router.post("/add", house.pushHouse2);
 
+// router.post("/updateImg", house.pushHouseImg);
+router.get("/getAllInfo", house.getAllHouseByEstate_id);
+
+router.get("/getInfo", house.getHouseInfoByHouse_id);
+
+router.delete("/deleteById", house.deleteHouseInfoByHouse_id);
 export default router;

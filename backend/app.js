@@ -10,13 +10,16 @@ import db from "./mongodb/db.js";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import MongoStore from "connect-mongo";
-
 // 引入日志记录中间件
 import winston from "winston";
 import expressWinston from "express-winston";
 import chalk from "chalk";
 
-// 解析form-data表单
+// // ES6无法使用__dirname等
+// import { fileURLToPath } from "url";
+// import { dirname } from "path";
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = dirname(__filename);
 
 // 路由主文件
 import router from "./routes/index.js";

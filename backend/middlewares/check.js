@@ -25,7 +25,7 @@ class Check {
       res.cc("你还尚未登录");
       return;
     } else {
-      const user = await UserModel.findOne;
+      const user = await UserModel.findOne({ user_id });
       if (!user) {
         res.cc("您还未注册");
       }

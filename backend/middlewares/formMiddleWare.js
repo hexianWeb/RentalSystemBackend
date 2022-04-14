@@ -15,3 +15,5 @@ const formMiddleWare = (req, res, next) => {
     next();
   });
 };
+
+export default formMiddleWare;

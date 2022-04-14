@@ -11,3 +11,8 @@ export const config_session = {
     maxAge: 24 * 60 * 60 * 1000,
   },
 };
+
+export const qqmail = {
+  user: "2387213640@qq.com",
+  password: "bbvcgcdoqgaadibc",
+};

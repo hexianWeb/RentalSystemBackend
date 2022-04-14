@@ -8,7 +8,10 @@ import estate from "./estate.js";
 
 import house from "./house.js";
 
-import Check from "../middlewares/check.js";
+import email from "./email.js";
+// import Check from "../middlewares/check.js";
+
+import spect from "./spect.js";
 
 export default (app) => {
   app.use("/admin", admin);
@@ -18,4 +21,8 @@ export default (app) => {
   app.use("/estate", estate);
 
   app.use("/house", house);
+
+  app.use("/spect", spect);
+
+  app.use("/email", email);
 };
