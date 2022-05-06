@@ -136,7 +136,8 @@ export default {
     }
     function editSpect(index, data) {
       console.log(data.spect_id);
-      // getList();
+
+      getList();
     }
     async function getList(limit = 10, offset = 0) {
       let res = await reqSpectAll(limit, offset);

@@ -284,6 +284,19 @@ export const reqSpectAll = async (limit, offset) => {
   });
   return res;
 };
+
+// 修改订单状态接口
+// export const reqChangeSpect=async(index) =>{
+//   const api_url="";
+//   switch (index) {
+//     case 1:
+
+//       break;
+//   case 2
+//     default:
+//       break;
+//   }
+// }
 // 彩虹屁
 // export const reqNothing = async () => {
 //   let res = await axios({
