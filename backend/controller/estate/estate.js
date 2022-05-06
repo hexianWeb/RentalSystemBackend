@@ -2,6 +2,11 @@ import EstateModel from "../../models/estate/estate.js";
 
 import Baseproto from "../../prototype/baseproto.js";
 
+// 地址转换为坐标
+import { getLocation } from "../../util/map/getLocation.js";
+import Qs from "qs";
+// 解析post数组
+
 import chalk from "chalk";
 
 import moment from "moment";
@@ -12,15 +17,22 @@ class Estate extends Baseproto {
     this.addEstate = this.addEstate.bind(this);
   }
   async addEstate(req, res, next) {
-    // console.log(req.body);
-    var { estate_title, province, city, area, address, map_lng, map_lat } =
-      req.body;
+    const { estate_title, province, city, area, address, tmp, desc } = req.body;
+
+    const { type } = Qs.parse(tmp);
+    // console.log(type);
     try {
       const estate_id = await this.getId("estate_id");
-      if (EstateModel.findOne({ estate_title })) {
+      const flag = await EstateModel.findOne({ estate_title });
+      if (flag) {
         res.cc("已经存在相同的地区");
         return;
       }
+      // 地址拼接
+      const better_address = province + city + area + address;
+      // 坐标获取
+      let { map_lat, map_lng } = await getLocation(better_address);
+      // return;
       const newEstate = {
         estate_id,
         estate_title,
@@ -30,6 +42,8 @@ class Estate extends Baseproto {
         address,
         map_lng,
         map_lat,
+        desc,
+        type,
       };
       await EstateModel.create(newEstate);
 
@@ -47,7 +61,7 @@ class Estate extends Baseproto {
     try {
       const allEstate = await EstateModel.find(
         {},
-        "-_id -estate_id -map_lng -map_lat"
+        "-_id  -map_lng -map_lat -house -updated -created"
       )
         .sort({ estate_id: 1 })
         .skip(Number(offset))
@@ -58,11 +72,12 @@ class Estate extends Baseproto {
       });
     } catch (error) {
       console.log(chalk.red("获取房产列表失败", error.message));
-      res, cc("获取房产列表失败");
+      res.cc("获取房产列表失败");
     }
   }
   async deleteById(req, res, next) {
     const id = req.params.estate_id;
+    console.log(chalk.red(id));
     if (!id || !Number(id)) {
       console.log(chalk.red("estate_id参数错误"));
       res.cc({
@@ -82,7 +97,7 @@ class Estate extends Baseproto {
             throw new Error("出错了 删除地区失败");
           }
           res.send({
-            status: 0,
+            status: 1,
             data: docs,
           });
         }
@@ -96,23 +111,21 @@ class Estate extends Baseproto {
     }
   }
   async updateEstate(req, res, next) {
-    // console.log(req.body);
-    var {
+    const {
       estate_id,
       estate_title,
       province,
       city,
       area,
       address,
-      map_lng,
-      map_lat,
+      tmp,
+      desc,
     } = req.body;
+
+    const { type } = Qs.parse(tmp);
     try {
-      const estate = await EstateModel.findOne({ estate_title });
-      if (estate) {
-        res.cc("相同地区房产已经存在");
-        return;
-      }
+      const better_address = province + city + area + address;
+      let { map_lat, map_lng } = await getLocation(better_address);
       await EstateModel.findOneAndUpdate(
         { estate_id: estate_id },
         {
@@ -125,6 +138,8 @@ class Estate extends Baseproto {
             map_lng,
             map_lat,
             updated: moment().format("L"),
+            desc,
+            type,
           },
         }
       );
@@ -136,6 +151,34 @@ class Estate extends Baseproto {
     } catch (error) {
       res.cc("更新失败");
     }
+  }
+  async searchEstate(req, res, next) {
+    const regexp = new RegExp(req.query.searchV, "i");
+
+    EstateModel.find(
+      {
+        $or: [
+          { estate_id: { $regex: regexp } },
+          { estate_title: { $regex: regexp } },
+          { province: { $regex: regexp } },
+          { city: { $regex: regexp } },
+          { area: { $regex: regexp } },
+        ],
+      },
+      (err, doc) => {
+        if (err) {
+          console.log(err);
+          res.cc("查询失败");
+        }
+        if (doc) {
+          res.send({
+            state: 1,
+            msg: "查询成功",
+            data: doc,
+          });
+        }
+      }
+    );
   }
 }
 

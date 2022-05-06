@@ -19,6 +19,9 @@ const estateSchema = new Schema({
   map_lat: { type: Number },
   created: { type: String, default: moment().format("L") },
   updated: { type: String, default: "" },
+  desc: { type: String, default: "" },
+  type: [{ type: String, default: "" }],
+  // cate: [{ type: String, default: "" }],
 });
 estateSchema.index({ estate_id: 1 });
 

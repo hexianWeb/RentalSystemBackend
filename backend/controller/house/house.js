@@ -7,6 +7,7 @@ import { HouseModel } from "../../models/house/house.js";
 import EstateModel from "../../models/estate/estate.js";
 import Baseproto from "../../prototype/baseproto.js";
 
+import Qs from "qs";
 // 绝对路径
 import { fileURLToPath } from "url";
 import { dirname } from "path";
@@ -26,31 +27,46 @@ class House extends Baseproto {
     super();
     this.pushHouse = this.pushHouse.bind(this);
     this.pushHouse2 = this.pushHouse2.bind(this);
+    this.updateLoadImg = this.updateLoadImg.bind(this);
   }
   // 楼盘ID在req中传递 弃用
   async pushHouse(req, res, next) {
-    const req_copy = req;
-    const pic = await this.getPath(req_copy);
-    console.log(chalk.yellow(pic));
     const estate_id = req.query.estate_id;
-    var { title, rent, housetype, useArea, floor, orientataion, admin_id } =
-      req.body;
+    const {
+      title,
+      rent,
+      tmp,
+      useArea,
+      floor,
+      orientataion,
+      pic,
+      rentMethod,
+      paymentMethod,
+    } = req.body;
+    console.log(req.body);
+    // 解析type
+    const { type } = Qs.parse(tmp);
+    console.log(type);
     try {
       const house = await HouseModel.findOne({ title });
       if (house) {
         res.cc("请勿重复添加房屋");
       } else {
+        // 生成ID
         const house_id = await this.getId("house_id");
         const newHouse = {
           house_id,
           title,
           rent,
-          housetype,
+          housetype: type,
           useArea,
           floor,
           orientataion,
-          admin_id,
+          pic,
+          rentMethod,
+          paymentMethod,
         };
+        console.log(chalk.yellow(newHouse));
         const Subdoc = await HouseModel.create(newHouse);
         await EstateModel.updateOne(
           { estate_id },
@@ -78,7 +94,7 @@ class House extends Baseproto {
   async getAllHouseByEstate_id(req, res, next) {
     const { limit = 5, offset = 0, estate_id } = req.query;
     try {
-      const allHouse = await EstateModel.find({ estate_id }, "house")
+      const allHouse = await EstateModel.find({ estate_id }, "house -_id")
         .sort({ house_id: 1 })
         .skip(Number(offset))
         .limit(Number(limit));
@@ -99,8 +115,16 @@ class House extends Baseproto {
       console.dir(chalk.blueBright(JSON.stringify(fields)));
       console.log(files);
       // 获取信息部分
-      var { title, rent, housetype, useArea, floor, orientataion, admin_id } =
-        fields;
+      var {
+        title,
+        rent,
+        rentMethod,
+        paymentMethod,
+        housetype,
+        useArea,
+        floor,
+        orientataion,
+      } = fields;
 
       let img_id;
       try {
@@ -145,7 +169,6 @@ class House extends Baseproto {
         floor,
         orientataion,
         pic,
-        admin_id,
       };
       const Subdoc = await HouseModel.create(newHouse);
       await EstateModel.updateOne(
@@ -218,6 +241,29 @@ class House extends Baseproto {
   }
 
   // 更新房源信息（删除后新增）
+
+  // 获取房屋信息从子文档
+  async getHouseInfo(req, res, next) {
+    // 修改为只显示运营管理人员旗下的作品
+    const { limit = 10, offset = 0 } = req.query;
+    try {
+      const allHouse = await HouseModel.find({}, "-id -updated")
+        .sort({ house_id: 1 })
+        .skip(Number(offset))
+        .limit(Number(limit));
+      res.send({
+        status: 1,
+        data: allHouse,
+      });
+    } catch (error) {
+      res.cc("获取房屋列表失败");
+    }
+  }
+
+  // 上传房屋图片
+  async updateLoadImg(req, res, next) {
+    await this.uploadImg(req, res);
+  }
 }
 
 export default new House();

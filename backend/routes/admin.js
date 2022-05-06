@@ -30,7 +30,8 @@ router.get("/signout", Check.checkAdmin, Admin.singout);
 
 router.get("/getInfo", Check.checkAdmin, Admin.getAdminInfo);
 
-router.get("/getAllAdmin", Check.checkAdmin, Admin.getAllAdmin);
+// router.get("/getAllAdmin", Check.checkAdmin, Admin.getAllAdmin);
+router.get("/getAllAdmin", Admin.getAllAdmin);
 
 router.post("/upload/avatar/:admin_id", Check.checkAdmin, Admin.updateAvatar);
 

@@ -11,6 +11,8 @@ import formidable from "formidable";
 import EmailModel from "../../models/email/email.js";
 
 import assert from "assert";
+
+import moment from "moment";
 class User extends Baseproto {
   constructor() {
     super();
@@ -79,6 +81,7 @@ class User extends Baseproto {
     // 是否已经存在
     try {
       const user = await UserModel.findOne({ user_name });
+      // console.log(user);
       if (user) {
         res.cc("该用户已经存在");
       } else {
@@ -210,7 +213,6 @@ class User extends Baseproto {
       }
     });
   }
-
   async getAllUser(req, res, next) {
     const { limit = 10, offset = 0 } = req.query;
     try {
@@ -221,6 +223,7 @@ class User extends Baseproto {
         .sort({ user_id: 1 })
         .skip(Number(offset))
         .limit(Number(limit));
+      // const page = await UserModel.countDocuments({});
       res.send({
         status: 1,
         data: allUser,
@@ -231,16 +234,68 @@ class User extends Baseproto {
     }
   }
 
+  // 修改密码
   async updateUserPassword(req, res, next) {
-    var { vire, email } = req.body;
+    var { vire, oldPassword, newPassword } = req.body;
+    const user_id = req.session.user_id;
     try {
-      if (!vire || !email) {
+      if (!vire) {
         throw new Error("验证码为空");
+      } else if (oldPassword == newPassword) {
+        throw new Error("新旧密码不能一致");
+      }
+      let { user_password, user_email } = await UserModel.findOne(
+        { user_id },
+        "user_password user_email"
+      );
+      // 验证验证码
+      if (!vire) {
+        throw new Error("验证码为空");
+      }
+      const flag = await EmailModel.findOne({ email: user_email, vire });
+
+      assert(flag, "验证码出错");
+      if (!bcrpt.compareSync(oldPassword, user_password)) {
+        throw new Error("旧密码错误");
+      } else {
+        newPassword = await bcrpt.hashSync(newPassword, 10);
+
+        await UserModel.findOneAndUpdate(
+          { user_id },
+          { $set: { user_password: newPassword } }
+        );
+        res.send({
+          status: 1,
+          message: "修改密码成功",
+        });
       }
     } catch (error) {
       res.cc(error.message);
       return;
     }
+  }
+
+  // 找回密码
+  // async findPassword(req,res,next) {
+
+  // }
+  // 本日本月新增数目
+  async NewUserNumber(req, res, next) {
+    let today = moment().format("L");
+    let month = moment().format("MM");
+    const reg = new RegExp(month);
+    // 查询每天与每月新增数目
+    const todayNumber = await UserModel.countDocuments({ add_time: today });
+    const mouthNumber = await UserModel.countDocuments({
+      add_time: { $regex: reg },
+    });
+    res.send({
+      status: 1,
+      data: {
+        todayNumber,
+        mouthNumber,
+      },
+    });
   }
 }
 

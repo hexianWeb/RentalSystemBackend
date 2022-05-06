@@ -11,18 +11,21 @@ import house from "./house.js";
 import email from "./email.js";
 // import Check from "../middlewares/check.js";
 
+import ids from "./ids.js";
 import spect from "./spect.js";
 
 export default (app) => {
-  app.use("/admin", admin);
+  app.use("/api/admin", admin);
 
-  app.use("/user", user);
+  app.use("/api/user", user);
 
-  app.use("/estate", estate);
+  app.use("/api/estate", estate);
 
-  app.use("/house", house);
+  app.use("/api/house", house);
 
-  app.use("/spect", spect);
+  app.use("/api/spect", spect);
 
   app.use("/email", email);
+
+  app.use("/api/ids", ids);
 };

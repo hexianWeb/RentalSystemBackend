@@ -5,7 +5,7 @@ import { port, config_session, db_url } from "./config/default.js";
 
 // 引入数据库连接中间件
 import db from "./mongodb/db.js";
-
+// import socket from "./util/socket/index.js";
 // 引入持久层中间件
 import cookieParser from "cookie-parser";
 import session from "express-session";
@@ -21,6 +21,10 @@ import chalk from "chalk";
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = dirname(__filename);
 
+// 引入IO组件
+import { Server } from "socket.io";
+// 引入http模块
+import { createServer } from "http";
 // 路由主文件
 import router from "./routes/index.js";
 
@@ -28,7 +32,87 @@ import router from "./routes/index.js";
 import joi from "@hapi/joi";
 
 const app = express();
+// 创建服务器
+const httpServer = createServer();
 
+// TODO: socket.io
+const io = new Server(httpServer, {
+  //配置cors，解决同源策略问题
+  allowEIO3: true,
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+    allowedHeaders: ["my-custom-header"],
+    credentials: true,
+  },
+});
+
+const userList = [
+  {
+    id: "1",
+    name: "默认群聊",
+    img: "http://localhost:3001/img/house_chat.jpg",
+  },
+];
+io.on("connection", (socket) => {
+  // 管理员进入聊天模块
+  socket.on("addAdmin", (data, callback) => {
+    // 重新赋值图片
+    data.img = encodeURI(`http://localhost:3001/img/${data.img}`);
+    var islogin = true;
+    // 是否以及在用户列表中
+    console.log("-----------------------------------");
+    io.sockets.sockets.forEach((iss) => {
+      console.log(iss.nme);
+      if (iss.name == data.name) {
+        islogin = false;
+      }
+      if (islogin) {
+        userList.push(data);
+        socket.name = data.name;
+        callback({
+          status: 1,
+          message: "您已成功登录聊天室",
+        });
+        // socket.name应该唯一
+        // io发送广播 socket是连接实例
+        io.emit("login", userList);
+      } else {
+        callback({
+          status: 0,
+          message: "false",
+        });
+      }
+    });
+  });
+  // 群聊事件
+  socket.on("groupChat", (data) => {
+    data.type = "user";
+    console.log(data);
+    // socket.broadcast.emit("updateMessage", data);
+    io.emit("updateMessage", data);
+  });
+  // 私聊
+  socket.on("privateChat", (data) => {
+    console.log(data);
+    io.sockets.sockets.forEach((iss) => {
+      if (iss.name == data.receiver) {
+        console.log(iss.name);
+        data.type = "user";
+        console.log(iss.id);
+        io.to(iss.id).emit("updateMessage", data);
+      }
+    });
+  });
+  // 管理掉线
+  socket.on("disconnect", () => {
+    console.log("用户离开");
+    let index = userList.findIndex((i) => i.name == socket.name);
+    if (index != -1) {
+      userList.splice(index, 1);
+    }
+  });
+});
 // 设置响应头 允许跨域 当然可以使用其余如cors 和jsonp 代理服务器等
 app.all("*", (req, res, next) => {
   const { origin, Origin, referer, Referer } = req.headers;
@@ -36,7 +120,8 @@ app.all("*", (req, res, next) => {
   res.header("Access-Control-Allow-Origin", allowOrigin); //允许跨域的源
   res.header(
     "Access-Control-Allow-Headers",
-    "Content-Type, Authorization, X-Requested-With"
+    "Content-Type, Authorization, X-Requested-With",
+    "Access-Control-Allow-Private-Network"
   );
   res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
   res.header("Access-Control-Allow-Credentials", true); //可以带cookies
@@ -57,7 +142,8 @@ app.use(
     secret: config_session.secret,
     // 开启允许客户端并发
     resave: true,
-    saveUninitialized: true,
+    // 无论有没有 每次都设置一个session 不选择
+    saveUninitialized: false,
     cookie: config_session.cookie,
     store: MongoStore.create({
       mongoUrl: db_url,
@@ -101,7 +187,7 @@ app.use((req, res, next) => {
 // 挂载路由
 router(app);
 // app.use("/test", router_test);
-
+app.use(express.static("public"));
 // 错误输出记录
 app.use(
   expressWinston.errorLogger({
@@ -127,6 +213,10 @@ app.use((err, req, res, next) => {
   return;
 });
 // 开启端口 port=3001
+//  DONE: 弃用
 app.listen(port, () => {
-  console.log(chalk.blue(`http://localhost:${port}`));
+  console.log(chalk.blue(`基础API使用:http://localhost:${port}`));
+});
+httpServer.listen(8082, () => {
+  console.log(chalk.blue(`websocket使用:http://localhost:8082`));
 });

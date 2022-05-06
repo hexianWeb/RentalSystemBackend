@@ -73,11 +73,11 @@ export default class Baseproto {
       // // 不保留表单文件的扩展名
       form.keepExtensions = false;
       // 存放临时图片的二进制文件
-      form.uploadDir = path.join("../tmp");
+      form.uploadDir = path.join("./tmp");
       /* fields 是字段 files是文件  */
       // TODO:请更新为多文件上传
       form.parse(req, async (err, fields, files) => {
-        // console.dir(chalk.blueBright(JSON.stringify(fields)));
+        console.log(files);
         if (err) {
           console.log(chalk.red("上传图片出错了" + err.message));
           reject("上传出错");
@@ -95,6 +95,7 @@ export default class Baseproto {
         // TODO:迭代为可以指定类型的图片上传方式
         const newImgName = moment().format().toString().trim() + img_id;
         const extname = path.extname(files.file.originalFilename);
+        // 类型判断
         if (![".jpg", ".jpeg", ".png"].includes(extname)) {
           fs.unlinkSync(files.file.filepath);
           res.cc("文件格式错误");
@@ -102,7 +103,6 @@ export default class Baseproto {
           return;
         }
         const fullName = newImgName + extname;
-        // const repath = "./public/img/" + fullName;
         const repath = path.join("./public/img", fullName);
         try {
           fs.renameSync(files.file.filepath, repath);
@@ -121,7 +121,7 @@ export default class Baseproto {
         }
       });
     });
-  } // 上传本机;
+  } // 上传本机;（弃用）
   async getHouseForm(req, res) {
     return new Promise((resolve, reject) => {
       // 创建 incoming form实例

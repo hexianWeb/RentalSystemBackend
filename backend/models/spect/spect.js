@@ -17,12 +17,16 @@ const spectSchema = new Schema({
   // 0 待确认 1待看房 2已取消 3已完成
   status: {
     type: Number,
-    required: true,
     default: 0,
+    // required: true,
   },
   seeTime: {
     type: String,
     default: moment().format("L"),
+    required: true,
+  },
+  money: {
+    type: Number,
     required: true,
   },
   created: {

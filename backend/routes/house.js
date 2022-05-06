@@ -6,12 +6,18 @@ import house from "../controller/house/house.js";
 
 const router = express.Router();
 
-router.post("/add", house.pushHouse2);
+// 添加房屋
+router.post("/add", house.pushHouse);
 
-// router.post("/updateImg", house.pushHouseImg);
-router.get("/getAllInfo", house.getAllHouseByEstate_id);
+// 管理员用
+router.get("/getAllInfoByEstate_id", house.getAllHouseByEstate_id);
 
-router.get("/getInfo", house.getHouseInfoByHouse_id);
+// 上传图片
+router.post("/uploadHouseImg", house.updateLoadImg);
+
+router.get("/getAllHouse", house.getHouseInfo);
+// 客户端详情用
+router.get("/getInfoByHouse_id", house.getHouseInfoByHouse_id);
 
 router.delete("/deleteById", house.deleteHouseInfoByHouse_id);
 export default router;

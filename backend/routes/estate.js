@@ -14,6 +14,7 @@ router.post("/add", check.checkAdmin, Estate.addEstate);
 
 router.get("/getAll", check.checkAdmin, Estate.getAllEstate);
 
+router.get("/search", Estate.searchEstate);
 router.delete("/deleteById/:estate_id", check.checkAdmin, Estate.deleteById);
 
 router.post("/update", check.checkAdmin, Estate.updateEstate);

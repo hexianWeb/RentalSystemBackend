@@ -12,16 +12,16 @@ const houseSchema = new Schema({
   //   estateId: { type: String, required: true },
   rent: { type: Number, required: true },
   //   租赁 方式 1-整租 2-合租 3-短租
-  rentMethod: { type: Number, default: 1 },
+  rentMethod: { type: String, default: "整租" },
   //租房手段
-  paymentMethod: { type: Number, default: 1 },
-  housetype: { type: String, default: "" },
+  paymentMethod: { type: String, default: "押一付一" },
+  housetype: [{ type: String, default: "" }],
   useArea: { type: String, default: "" },
   //   0低 1中 2高
-  floor: { type: Number, default: 0 },
+  floor: { type: String, required: true },
   orientataion: { type: String, required: true },
   pic: { type: String, default: "default_home.jpg" },
-  admin_id: { type: Number, required: true },
+  // admin_id: { type: Number, required: true },
   status: { type: Number, default: 0, required: true },
   created: { type: String, trim: true, default: moment().format("L") },
   updated: { type: String, default: "" },

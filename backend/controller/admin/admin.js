@@ -41,10 +41,14 @@ class Admin extends Baseproto {
         // 向session中存入标识
         console.log(chalk.yellow(admin.user_id));
         req.session.admin_id = admin.user_id;
-
+        // console.log(req.session);
         res.send({
           status: 0,
-          success: "登陆成功",
+          // 运维管理人员 角色标识 admin
+          role: "admin",
+          // token 用于前端权限验证
+          token: admin.user_id,
+          message: "登陆成功",
         });
       }
     } catch (error) {
