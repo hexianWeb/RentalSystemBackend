@@ -4,6 +4,8 @@ import UserModel from "../../models/user/user.js";
 
 import SpectModel from "../../models/spect/spect.js";
 
+import EstateModel from "../../models/estate/estate.js";
+
 import { HouseModel } from "../../models/house/house.js";
 
 import Email from "../../controller/email/email.js";
@@ -17,7 +19,7 @@ class Spect extends Baseproto {
   }
   //   用户端创建订单
   async addSpect(req, res, next) {
-    const { user_id, house_id, seeTime } = req.body;
+    const { user_id, house_id, seeTime, estate_id } = req.body;
     const house = await HouseModel.findOne({ house_id }, "-_id status rent");
     // console.log(house.rent);
     // 验证信息 出租的房屋不可再次出租
@@ -56,6 +58,7 @@ class Spect extends Baseproto {
       const newSpect = {
         spect_id,
         house_id,
+        estate_id,
         user_id,
         seeTime,
         user_realName: realname,
@@ -65,6 +68,19 @@ class Spect extends Baseproto {
 
       //   创建订单 修改房源出租状态
       await SpectModel.create(newSpect);
+      await EstateModel.findOneAndUpdate(
+        {
+          $and: [
+            { estate_id },
+            {
+              "house.house_id": house_id,
+            },
+          ],
+        },
+        {
+          $set: { "house.$.status": 1 },
+        }
+      );
       await HouseModel.updateOne(
         { house_id },
         { $set: { status: 1, updated: moment().format("LL") } }
@@ -118,7 +134,50 @@ class Spect extends Baseproto {
       res.cc(error.message);
     }
   }
+  // 管理員取消订单
+  async cancelSpect(req, res, next) {
+    const spect_id = req.query.spect_id;
+    try {
+      const spectDoc = await SpectModel.findOne(
+        {
+          spect_id,
+        },
+        "-_id user_id house_id estate_id"
+      );
+      await SpectModel.updateOne({ spect_id }, { $set: { status: 3 } });
 
+      await HouseModel.updateOne(
+        {
+          house_id: spectDoc.house_id,
+        },
+        {
+          $set: {
+            status: 0,
+          },
+        }
+      );
+      await EstateModel.findOneAndUpdate(
+        {
+          $and: [
+            { estate_id: spectDoc.estate_id },
+            {
+              "house.house_id": spectDoc.house_id,
+            },
+          ],
+        },
+        {
+          $set: { "house.$.status": 0 },
+        }
+      );
+      res.send({
+        status: 1,
+        msg: "删除订单成功",
+      });
+    } catch (error) {
+      res.cc(error);
+      return;
+    }
+  }
   // 用户取消订单
   async deleteSpect(req, res, next) {
     const spect_id = req.query.spect_id;
@@ -127,7 +186,7 @@ class Spect extends Baseproto {
     try {
       const spectDoc = await SpectModel.find(
         { spect_id },
-        "-_id user_id house_id"
+        "-_id user_id house_id estate_id"
       );
       //   不能删除他人订单
       if (spectDoc.user_id == user_id) {
@@ -139,6 +198,20 @@ class Spect extends Baseproto {
           { house_id: spectDoc.house_id },
           {
             $set: { status: 0, updated: moment().format("LL") },
+          }
+        );
+        // 主子文档同调
+        await EstateModel.findOneAndUpdate(
+          {
+            $and: [
+              { estate_id: spectDoc.estate_id },
+              {
+                "house.house_id": spectDoc.house_id,
+              },
+            ],
+          },
+          {
+            $set: { "house.$.status": 0 },
           }
         );
         res.send({

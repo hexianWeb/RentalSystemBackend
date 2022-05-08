@@ -19,6 +19,7 @@ router.get("/getAll", spect.getAllSpect);
 // 管理端 修改订单状态 0=>1
 router.get("/confirm", spect.confirmSpect);
 
+router.get("/cancelSpect", spect.cancelSpect);
 router.get("/newSpectNumber", spect.newSpectNumber);
 
 router.get("/newMoney", spect.newSpectMoney);
