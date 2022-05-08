@@ -286,17 +286,29 @@ export const reqSpectAll = async (limit, offset) => {
 };
 
 // 修改订单状态接口
-// export const reqChangeSpect=async(index) =>{
-//   const api_url="";
-//   switch (index) {
-//     case 1:
-
-//       break;
-//   case 2
-//     default:
-//       break;
-//   }
-// }
+export const reqChangeSpect = async (index, spect_id) => {
+  console.log(index, spect_id);
+  var api_url = "";
+  switch (index) {
+    // 转换为占用状态
+    case 1:
+      api_url = `http://localhost:3001/api/spect/confirm?spect_id=${spect_id}`;
+      break;
+    // 确认订单成交
+    case 2:
+      api_url = `http://localhost:3001/api/spect/getHouse?spect_id=${spect_id}`;
+      break;
+    // 删除订单
+    case 3:
+      api_url = `http://localhost:3001/api/spect/cancelSpect?spect_id=${spect_id}`;
+      break;
+  }
+  let res = await requests({
+    url: api_url,
+    method: "get",
+  });
+  return res;
+};
 // 彩虹屁
 // export const reqNothing = async () => {
 //   let res = await axios({

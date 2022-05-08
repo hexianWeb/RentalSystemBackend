@@ -35,7 +35,7 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import { ref, onMounted } from "vue";
 import CommonTable from "@/components/CommonTable";
 import SpectForm from "@/components/SpectForm";
-import { reqSpectAll, reqconfigPage } from "@/api";
+import { reqSpectAll, reqconfigPage, reqChangeSpect } from "@/api";
 export default {
   name: "spect",
   components: {
@@ -45,8 +45,9 @@ export default {
   setup() {
     //   变量
     const tableData = ref([]);
+    const operateSpect = ref();
     const input = ref();
-    const isShow = ref(true);
+    const isShow = ref(false);
     const config = ref({
       page: 1,
       pageSize: 5,
@@ -100,7 +101,7 @@ export default {
     onMounted(async () => {
       await getList();
     });
-    function confirm(flag, index) {
+    async function confirm(flag) {
       // alert(flag);
       //#region
       switch (flag) {
@@ -128,16 +129,17 @@ export default {
             type: "error",
           });
           break;
-        default:
-          isShow.value = false;
-          break;
       }
+
+      isShow.value = false;
+      let res = await reqChangeSpect(flag, operateSpect.value);
+      console.log(res);
       //#endregion
+      getList();
     }
     function editSpect(index, data) {
-      console.log(data.spect_id);
-
-      getList();
+      isShow.value = true;
+      operateSpect.value = data.spect_id;
     }
     async function getList(limit = 10, offset = 0) {
       let res = await reqSpectAll(limit, offset);
@@ -152,6 +154,7 @@ export default {
       input,
       config,
       isShow,
+      operateSpect,
       confirm,
       editSpect,
     };
