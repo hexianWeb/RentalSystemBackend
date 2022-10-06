@@ -82,6 +82,8 @@ nodemon ./app.js
 
 ## 项目布局
 
+### Backend布局
+
 ```
 ├── app.js				入口文件
 ├── config				运行配置
@@ -165,3 +167,95 @@ nodemon ./app.js
     └── socket			
         └── index.js
 ```
+
+
+
+### Frontend布局
+
+```
+├── babel.config.js
+├── header.html
+├── jsconfig.json
+├── package.json
+├── package-lock.json
+├── public
+│   ├── favicon.ico
+│   ├── img
+│   │   ├── bg_house1.jpg
+│   │   ├── bg_house.png
+│   │   └── google-chrome-stable_current_amd64.deb
+│   └── index.html
+├── README.md
+├── src
+│   ├── api				
+│   │   ├── index.js		API接口
+│   │   └── request.js		axios封装
+│   ├── App.vue
+│   ├── components
+│   │   ├── Brand				
+│   │   │   └── index.vue
+│   │   ├── ChatTable		聊天模块
+│   │   │   ├── chatAside.vue
+│   │   │   ├── chatFooter.vue
+│   │   │   ├── chatMain.vue
+│   │   │   └── index.vue
+│   │   ├── CommonTable		表单展示模块
+│   │   │   └── index.vue
+│   │   ├── EstateForm		地区信息填写与修改
+│   │   │   └── index.vue
+│   │   ├── HouseForm		房屋信息填写与修改
+│   │   │   └── index.vue
+│   │   ├── Lang			中英转换
+│   │   │   └── index.vue
+│   │   ├── SrceenFull		全屏模块
+│   │   │   └── index.vue
+│   │   ├── TypeNav			
+│   │   │   └── index.vue
+│   │   ├── UploadAvatar	
+│   │   │   └── index.vue
+│   │   └── UserForm
+│   │       └── index.vue
+│   ├── config
+│   │   └── index.js
+│   ├── hooks
+│   │   ├── index.js
+│   │   └── websocket.js
+│   ├── i18n
+│   │   ├── en.js
+│   │   ├── index.js
+│   │   └── zh.js
+│   ├── main.js
+│   ├── plugins
+│   │   └── io.js
+│   ├── router				路由配置
+│   │   ├── index.js
+│   │   └── router_table.js
+│   ├── store				vueX
+│   │   ├── brand
+│   │   │   └── index.js
+│   │   ├── chat
+│   │   │   └── index.js
+│   │   ├── home
+│   │   │   └── index.js
+│   │   ├── index.js
+│   │   └── module
+│   │       └── home.js
+│   └── views
+│       ├── Chat
+│       │   └── index.vue
+│       ├── Estate
+│       │   └── index.vue
+│       ├── Home
+│       │   └── index.vue
+│       ├── House
+│       │   └── index.vue
+│       ├── Login
+│       │   └── index.vue
+│       ├── Main.vue
+│       ├── Spect
+│       │   └── index.vue
+│       └── User
+│           └── index.vue
+└── vue.config.js
+```
+
