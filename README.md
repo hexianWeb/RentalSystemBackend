@@ -68,7 +68,7 @@ nodemon ./app.js
 
 #### 部分后台管理系统截图
 
-![](./ReadImg/ByHexian_2022-10-06_11-40.png)
+![](./backend/ReadImg/ByHexian_2022-10-06_11-40.png)
 
 ![](ReadImg/ByHexian_2022-10-06_11-46.png)
 
