@@ -22,17 +22,28 @@
 
 > 部署环境 阿里云 Ubuntu20.04 LTS 64位
 
-> 有问题也不要来问我，我也不会hhhh
+> 有问题也不要来问我 O(∩_∩)O哈哈哈~ 
 
-> 相关项目地址： 
+> 小程序相关项目地址： 
 
 ## 技术栈
 
 ---------------
 
+### 后台接口平台技术栈
+
+
 ```bash
 nodejs + express + mongodb +mongoose +es6/7 
 ```
+
+### 后台展示平台技术栈
+
+```
+vue3 + vuex + vue-router + webpack + ES6/7 + less + element-ui
+```
+
+
 
 ## 项目运行
 
@@ -46,7 +57,7 @@ nodejs + express + mongodb +mongoose +es6/7
 
 
 
-
+接口平台
 
 ```
 git clone https://github.com/hexianWeb/RentalSystemBackend
@@ -62,25 +73,38 @@ nodemon ./app.js
 
 
 
+展示平台
+
+```
+cd ./frontend
+npm install 
+npm run serve
+//访问： http://localhost:8001 即可
+```
+
+
+
 ### 后台管理系统仓库网址
 
 ### 部分截图
 
 #### 部分后台管理系统截图
 
-![](./backend/ReadImg/ByHexian_2022-10-06_11-40.png)
+![](ReadImg/ByHexian_2022-10-06_11-40.png)
 
-![](./backend/ReadImg/ByHexian_2022-10-06_11-46.png)
+![](ReadImg/ByHexian_2022-10-06_11-46.png)
 
-![](./backend/ReadImg/ByHexian_2022-10-06_12-07.png)
+![](ReadImg/ByHexian_2022-10-06_12-07.png)
 
-![](./backend/ReadImg/ByHexian_2022-10-06_12-12_1.png)
+![](ReadImg/ByHexian_2022-10-06_12-12_1.png)
 
-![](./backend/./backend/ReadImg/ByHexian_2022-10-06_12-12.png)
+![](ReadImg/ByHexian_2022-10-06_12-12.png)
 
-![](./backend/ReadImg/ByHexian_2022-10-06_12-57.png)
+![](ReadImg/ByHexian_2022-10-06_12-57.png)
 
 ## 项目布局
+
+### Backend布局
 
 ```
 ├── app.js				入口文件
@@ -164,5 +188,96 @@ nodemon ./app.js
     │   └── getLocation.js
     └── socket			
         └── index.js
+```
+
+
+
+### Frontend布局
+
+```
+├── babel.config.js
+├── header.html
+├── jsconfig.json
+├── package.json
+├── package-lock.json
+├── public
+│   ├── favicon.ico
+│   ├── img
+│   │   ├── bg_house1.jpg
+│   │   ├── bg_house.png
+│   │   └── google-chrome-stable_current_amd64.deb
+│   └── index.html
+├── README.md
+├── src
+│   ├── api				
+│   │   ├── index.js		API接口
+│   │   └── request.js		axios封装
+│   ├── App.vue
+│   ├── components
+│   │   ├── Brand				
+│   │   │   └── index.vue
+│   │   ├── ChatTable		聊天模块
+│   │   │   ├── chatAside.vue
+│   │   │   ├── chatFooter.vue
+│   │   │   ├── chatMain.vue
+│   │   │   └── index.vue
+│   │   ├── CommonTable		表单展示模块
+│   │   │   └── index.vue
+│   │   ├── EstateForm		地区信息填写与修改
+│   │   │   └── index.vue
+│   │   ├── HouseForm		房屋信息填写与修改
+│   │   │   └── index.vue
+│   │   ├── Lang			中英转换
+│   │   │   └── index.vue
+│   │   ├── SrceenFull		全屏模块
+│   │   │   └── index.vue
+│   │   ├── TypeNav			
+│   │   │   └── index.vue
+│   │   ├── UploadAvatar	
+│   │   │   └── index.vue
+│   │   └── UserForm
+│   │       └── index.vue
+│   ├── config
+│   │   └── index.js
+│   ├── hooks
+│   │   ├── index.js
+│   │   └── websocket.js
+│   ├── i18n
+│   │   ├── en.js
+│   │   ├── index.js
+│   │   └── zh.js
+│   ├── main.js
+│   ├── plugins
+│   │   └── io.js
+│   ├── router				路由配置
+│   │   ├── index.js
+│   │   └── router_table.js
+│   ├── store				vueX
+│   │   ├── brand
+│   │   │   └── index.js
+│   │   ├── chat
+│   │   │   └── index.js
+│   │   ├── home
+│   │   │   └── index.js
+│   │   ├── index.js
+│   │   └── module
+│   │       └── home.js
+│   └── views
+│       ├── Chat
+│       │   └── index.vue
+│       ├── Estate
+│       │   └── index.vue
+│       ├── Home
+│       │   └── index.vue
+│       ├── House
+│       │   └── index.vue
+│       ├── Login
+│       │   └── index.vue
+│       ├── Main.vue
+│       ├── Spect
+│       │   └── index.vue
+│       └── User
+│           └── index.vue
+└── vue.config.js
 ```
 
