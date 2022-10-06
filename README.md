@@ -24,7 +24,7 @@
 
 > 有问题也不要来问我 O(∩_∩)O哈哈哈~ 
 
-> 小程序相关项目地址： 
+> 小程序相关项目地址： [点击这里]（https://github.com/hexianWeb/RentalFrontEnd）
 
 ## 技术栈
 
