@@ -22,17 +22,28 @@
 
 > 部署环境 阿里云 Ubuntu20.04 LTS 64位
 
-> 有问题也不要来问我，我也不会hhhh
+> 有问题也不要来问我 O(∩_∩)O哈哈哈~ 
 
-> 相关项目地址： 
+> 小程序相关项目地址： 
 
 ## 技术栈
 
 ---------------
 
+### 后台接口平台技术栈
+
+
 ```bash
 nodejs + express + mongodb +mongoose +es6/7 
 ```
+
+### 后台展示平台技术栈
+
+```
+vue3 + vuex + vue-router + webpack + ES6/7 + less + element-ui
+```
+
+
 
 ## 项目运行
 
@@ -46,7 +57,7 @@ nodejs + express + mongodb +mongoose +es6/7
 
 
 
-
+接口平台
 
 ```
 git clone https://github.com/hexianWeb/RentalSystemBackend
@@ -58,6 +69,17 @@ npm install
 nodemon ./app.js
 
 访问: http://localhost:3001 (如果已启动前台程序，则不需要打开此地址)
+```
+
+
+
+展示平台
+
+```
+cd ./frontend
+npm install 
+npm run serve
+//访问： http://localhost:8001 即可
 ```
 
 
